@@ -6,6 +6,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
+#import <KTVHTTPCache/KTVHTTPCache.h>
 
 #import "AVAssetTrackUtils.h"
 #import "messages.g.h"
@@ -24,6 +25,7 @@
 - (FLTFrameUpdater *)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry {
   NSAssert(self, @"super init cannot be nil");
   if (self == nil) return nil;
+  [KTVHTTPCache proxyStart:nil];
   _registry = registry;
   return self;
 }
@@ -553,7 +555,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     player = [[FLTVideoPlayer alloc] initWithAsset:assetPath frameUpdater:frameUpdater];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else if (input.uri) {
-    player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
+    NSURL *proxyURL = [KTVHTTPCache proxyURLWithOriginalURL:[NSURL URLWithString:input.uri]];
+    if ([input.uri containsString:@".m3u8"]) {
+      proxyURL = [NSURL URLWithString:input.uri];
+    }
+    
+    player = [[FLTVideoPlayer alloc] initWithURL:proxyURL
                                     frameUpdater:frameUpdater
                                      httpHeaders:input.httpHeaders];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];

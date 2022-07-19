@@ -18,6 +18,9 @@ Downloaded by pub (not CocoaPods).
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
 
-  s.platform = :ios, '9.0'
+  # KTVHTTPCache
+  s.dependency 'KTVHTTPCache', '~> 2.0.0'
+
+  s.platform = :ios, '10.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 end
